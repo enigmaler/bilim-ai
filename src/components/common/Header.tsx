@@ -36,8 +36,11 @@ const Header = ({ children }: HeaderProps) => (
         <Link to="/vocabulary" className="text-gray-700 hover:text-violet-600">
           Vocabulary
         </Link>
-        <Link to="/listening" className="text-gray-700 hover:text-violet-600">
-          Listening
+        <Link to="/flashcards" className="text-gray-700 hover:text-violet-600">
+          Flashcards
+        </Link>
+        <Link to="/quiz" className="text-gray-700 hover:text-violet-600">
+          Quiz
         </Link>
       </nav>
       {children}

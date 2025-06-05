@@ -3,15 +3,33 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Header from '@/components/common/Header';
+import { fetchFromDeepSeek } from '@/lib/deepseek';
+
+interface VocabItem {
+  term: string;
+  info: string;
+}
 
 const Vocabulary = () => {
   const [word, setWord] = useState('');
-  const [words, setWords] = useState<string[]>([]);
+  const [items, setItems] = useState<VocabItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const addWord = () => {
+  const addWord = async () => {
     if (!word.trim()) return;
-    setWords([...words, word.trim()]);
-    setWord('');
+    setLoading(true);
+    try {
+      const res = await fetchFromDeepSeek(
+        `Explain the meaning of "${word.trim()}" and provide a short example sentence.`,
+        'You are a helpful language tutor created by Emilbek. Be concise.'
+      );
+      setItems([...items, { term: word.trim(), info: res.trim() }]);
+      setWord('');
+    } catch (error) {
+      console.error('Failed to fetch info:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,15 +44,16 @@ const Vocabulary = () => {
             placeholder="Enter new word"
             className="bg-white/80 backdrop-blur-sm"
           />
-          <Button onClick={addWord} className="bg-gradient-to-r from-violet-500 to-blue-500 text-white">
-            Add
+          <Button onClick={addWord} disabled={!word.trim() || loading} className="bg-gradient-to-r from-violet-500 to-blue-500 text-white">
+            {loading ? 'Adding...' : 'Add'}
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {words.map((w, i) => (
-            <Badge key={i} className="px-3 py-2 bg-white/70 text-violet-700">
-              {w}
-            </Badge>
+        <div className="space-y-4">
+          {items.map((item, i) => (
+            <div key={i} className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow">
+              <p className="font-medium text-violet-700 mb-1">{item.term}</p>
+              <p className="text-gray-700 whitespace-pre-line">{item.info}</p>
+            </div>
           ))}
         </div>
       </main>
