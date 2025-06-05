@@ -42,6 +42,9 @@ const Header = ({ children }: HeaderProps) => (
         <Link to="/quiz" className="text-gray-700 hover:text-violet-600">
           Quiz
         </Link>
+        <Link to="/review" className="text-gray-700 hover:text-violet-600">
+          Review
+        </Link>
       </nav>
       {children}
     </div>

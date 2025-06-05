@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import Header from '@/components/common/Header';
 import { fetchFromDeepSeek } from '@/lib/deepseek';
+import { motion } from 'framer-motion';
 
 interface VocabItem {
   term: string;
@@ -14,6 +14,17 @@ const Vocabulary = () => {
   const [word, setWord] = useState('');
   const [items, setItems] = useState<VocabItem[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('vocabulary');
+    if (stored) {
+      setItems(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('vocabulary', JSON.stringify(items));
+  }, [items]);
 
   const addWord = async () => {
     if (!word.trim()) return;
@@ -30,6 +41,10 @@ const Vocabulary = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeItem = (index: number) => {
+    setItems(items.filter((_, i) => i !== index));
   };
 
   return (
@@ -50,10 +65,25 @@ const Vocabulary = () => {
         </div>
         <div className="space-y-4">
           {items.map((item, i) => (
-            <div key={i} className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow">
-              <p className="font-medium text-violet-700 mb-1">{item.term}</p>
-              <p className="text-gray-700 whitespace-pre-line">{item.info}</p>
-            </div>
+            <motion.div
+              key={i}
+              className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow flex justify-between items-start"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div>
+                <p className="font-medium text-violet-700 mb-1">{item.term}</p>
+                <p className="text-gray-700 whitespace-pre-line">{item.info}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => removeItem(i)}
+                className="ml-2"
+              >
+                ✕
+              </Button>
+            </motion.div>
           ))}
         </div>
       </main>

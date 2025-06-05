@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/common/Header';
 import { fetchFromDeepSeek } from '@/lib/deepseek';
+import { motion } from 'framer-motion';
 
 interface Card {
   word: string;
@@ -13,6 +14,17 @@ const Flashcards = () => {
   const [term, setTerm] = useState('');
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('flashcards');
+    if (stored) {
+      setCards(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('flashcards', JSON.stringify(cards));
+  }, [cards]);
 
   const addCard = async () => {
     if (!term.trim()) return;
@@ -29,6 +41,10 @@ const Flashcards = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const removeCard = (index: number) => {
+    setCards(cards.filter((_, i) => i !== index));
   };
 
   return (
@@ -53,10 +69,25 @@ const Flashcards = () => {
         </div>
         <div className="space-y-4">
           {cards.map((c, i) => (
-            <div key={i} className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow">
-              <p className="font-medium text-violet-700 mb-1">{c.word}</p>
-              <p className="text-gray-700 whitespace-pre-line">{c.meaning}</p>
-            </div>
+            <motion.div
+              key={i}
+              className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow flex justify-between items-start"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div>
+                <p className="font-medium text-violet-700 mb-1">{c.word}</p>
+                <p className="text-gray-700 whitespace-pre-line">{c.meaning}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => removeCard(i)}
+                className="ml-2"
+              >
+                ✕
+              </Button>
+            </motion.div>
           ))}
         </div>
       </main>
