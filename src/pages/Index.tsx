@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send, MessageCircle, Globe, BookOpen, Plane } from 'lucide-react';
 import { fetchFromDeepSeek } from '@/lib/deepseek';
+import Header from '@/components/common/Header';
 
 interface Message {
   id: string;
@@ -170,56 +171,29 @@ const Index = () => {
       </div>
 
       {/* Header */}
-      <motion.header 
-        className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-violet-100"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div 
-              className="flex items-center space-x-3"
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              <motion.div
-                className="w-10 h-10 bg-gradient-to-br from-violet-500 to-blue-500 rounded-full flex items-center justify-center"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <Globe className="w-5 h-5 text-white" />
-              </motion.div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-                BILIMAI ✨
-              </h1>
-            </motion.div>
-
-            <motion.div
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-            >
-              <Select value={selectedMode} onValueChange={setSelectedMode}>
-                <SelectTrigger className="w-48 bg-white/70 border-violet-200">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-white/95 backdrop-blur-sm">
-                  {personalityModes.map((mode) => (
-                    <SelectItem key={mode.id} value={mode.id}>
-                      <div className="flex items-center space-x-2">
-                        {mode.icon}
-                        <span>{mode.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </motion.div>
-          </div>
-        </div>
-      </motion.header>
+      <Header>
+        <motion.div
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
+          <Select value={selectedMode} onValueChange={setSelectedMode}>
+            <SelectTrigger className="w-48 bg-white/70 border-violet-200">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white/95 backdrop-blur-sm">
+              {personalityModes.map((mode) => (
+                <SelectItem key={mode.id} value={mode.id}>
+                  <div className="flex items-center space-x-2">
+                    {mode.icon}
+                    <span>{mode.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </motion.div>
+      </Header>
 
       {/* Chat Area */}
       <main className="container mx-auto px-4 py-6 max-w-4xl">
